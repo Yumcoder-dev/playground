@@ -10,12 +10,23 @@ import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"log"
+	"math/rand"
 	"testing"
 	"time"
+	"yumcoder.com/yumd/server/core/cache2"
+	"yumcoder.com/yumd/server/core/proto/schema"
+	"yumcoder.com/yumd/server/core/test2"
 
 	"github.com/gomodule/redigo/redis"
 	"github.com/mna/redisc"
 )
+
+func getRedisConfig() *cache2.Config {
+	return &cache2.Config{
+		Adapter:   "redis",
+		Endpoints: test2.RedisEndpoints,
+	}
+}
 
 func getCli() (*redisc.Cluster, error) {
 	cluster := &redisc.Cluster{
@@ -92,4 +103,27 @@ func Test_Cluster(t *testing.T) {
 		}
 		assert.Equal(t, r, val)
 	}
+}
+
+func Test_redis_get(t *testing.T) {
+	salt := &schema.FutureSalt_Data{Salt:rand.Int63(), ValidSince:int32(time.Now().Unix())}
+	salts := []*schema.FutureSalt_Data{salt}
+
+	cache, err := cache2.NewCache(getRedisConfig())
+	if err != nil {
+		t.Log(err)
+	}
+
+	timeoutDuration := 10 * time.Second
+	if err = cache.Put("yumd-redis-key", salts, timeoutDuration); err != nil {
+		t.Error("put err: ", err)
+	}
+	val := cache.Get("yumd-redis-key")
+	str, _ := redis.String(val, nil)
+	t.Log(str)
+
+	// t.Log(val.([]*schema.FutureSalt_Data))
+
+	//res := []*schema.FutureSalt_Data{}
+	//fmt.Fscan([]byte(val), &res)
 }
