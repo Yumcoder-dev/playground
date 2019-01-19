@@ -90,3 +90,66 @@ func Test_Mysql(t *testing.T) {
 	}
 	fmt.Printf("The square number of 1 is: %d", squareNum)
 }
+
+type SquareNum struct {
+	number int32
+	squareNumber int32
+}
+
+func Test_Mysql_injection(t *testing.T) {
+	db, err := sql.Open("mysql", "root:@tcp(172.17.0.2:3306)/yumdcoder")
+	if err != nil {
+		panic(err.Error()) // Just for example purpose. You should use proper error handling instead of panic
+	}
+	defer db.Close()
+
+	id := "1; delete from squareNum2 where number=1;"
+
+	var query = `SELECT squareNumber FROM squareNum2 WHERE number = ?`
+	rows, err := db.Query(query, id)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer rows.Close()
+
+	if rows.Next() {
+		result := &SquareNum{}
+		if err = rows.Scan(&result.squareNumber); err != nil {
+			t.Fatal(err)
+		}
+		t.Log(result)
+		return
+	}
+
+	if err = rows.Err(); err != nil {
+		t.Fatal(err)
+	}
+
+	t.Log("nil...")
+}
+
+func Test_Mysql_SingleRow(t *testing.T) {
+	db, err := sql.Open("mysql", "root:@tcp(172.17.0.2:3306)/yumd")
+	if err != nil {
+		panic(err.Error()) // Just for example purpose. You should use proper error handling instead of panic
+	}
+	defer db.Close()
+
+	id := "9891256212030"
+
+	var query = `select 1 from user where phone = ?`
+	row := db.QueryRow(query, id)
+	result := int8(0)
+	err = row.Scan(&result)
+	switch err {
+	case sql.ErrNoRows:
+		t.Log(false)
+	case nil:
+		t.Log(result == 1)
+	default:
+		t.Log(err)
+	}
+
+	t.Log("nil...")
+}
