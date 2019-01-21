@@ -19,6 +19,10 @@ import (
 	"yumcoder.com/yumd/server/core/proto/schema"
 )
 
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
+
 func func_msgpack() {
 	salt := &schema.TLFutureSalt{Data2:&schema.FutureSalt_Data{
 		Salt:rand.Int63(),

@@ -106,6 +106,7 @@ func Test_Cluster(t *testing.T) {
 }
 
 func Test_redis_get(t *testing.T) {
+	rand.Seed(time.Now().UnixNano())
 	salt := &schema.FutureSalt_Data{Salt:rand.Int63(), ValidSince:int32(time.Now().Unix())}
 	salts := []*schema.FutureSalt_Data{salt}
 
@@ -118,7 +119,7 @@ func Test_redis_get(t *testing.T) {
 	if err = cache.Put("yumd-redis-key", salts, timeoutDuration); err != nil {
 		t.Error("put err: ", err)
 	}
-	val := cache.Get("yumd-redis-key")
+	val, _ := cache.Get("yumd-redis-key")
 	str, _ := redis.String(val, nil)
 	t.Log(str)
 
