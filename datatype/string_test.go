@@ -7,6 +7,7 @@
 package datatype
 
 import (
+	"strings"
 	"testing"
 )
 
@@ -102,4 +103,8 @@ func Test_str(t *testing.T) {
 	b := `omid\`
 	t.Log(a)
 	t.Log(b)
+}
+
+func Test_repeat(t *testing.T) {
+	t.Log(strings.Repeat(",?", 0))
 }
