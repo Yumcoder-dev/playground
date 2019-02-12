@@ -7,6 +7,7 @@
 package log
 
 import (
+	"errors"
 	"flag"
 	"github.com/golang/glog"
 	"log"
@@ -38,4 +39,22 @@ func Test_GLog(t *testing.T) {
 	glog.Infoln("glog info message")
 	glog.Error("glog error message")
 	defer glog.Flush()
+}
+
+func f1(i int) (int32, error) {
+	returnErr := func(err error) (int32, error) {
+		glog.Error(err)
+		return 0, err
+	}
+
+	if i > 10 {
+		return returnErr(errors.New("i>10"))
+	}
+
+	glog.Info("info...")
+	return 100, nil
+}
+
+func Test_log_inline_fun(t *testing.T) {
+	f1(300)
 }

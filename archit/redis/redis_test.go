@@ -128,3 +128,41 @@ func Test_redis_get(t *testing.T) {
 	//res := []*schema.FutureSalt_Data{}
 	//fmt.Fscan([]byte(val), &res)
 }
+
+func Test_redis_inc(t *testing.T) {
+	cache, err := cache2.NewCache(getRedisConfig())
+	if err != nil {
+		t.Log(err)
+	}
+	timer := time.NewTimer(time.Second)
+	size := 1000000
+	m := make(map[int]int, size)
+	for i:= 0;i<size; i++ {
+		m[i]=i
+	}
+
+	loop := 1
+	work := 1
+	for  {
+		select {
+		case <-timer.C:
+			t.Logf("timeout: l:%d w:%d", loop, work)
+			return
+		default:
+			if loop %1000 == 0{
+				if _, err = cache.Inc("yumd-redis-key"); err != nil {
+					t.Error("put err: ", err)
+				}
+				work++
+			}
+			v,_ := m[loop]
+			v++
+			loop++
+		}
+	}
+
+	// t.Log(val.([]*schema.FutureSalt_Data))
+
+	//res := []*schema.FutureSalt_Data{}
+	//fmt.Fscan([]byte(val), &res)
+}

@@ -83,3 +83,17 @@ func Test_Mack(t *testing.T) {
 	b = make([]byte, 15)
 	t.Log(b)
 }
+
+func Test_append(t *testing.T) {
+	type S struct {
+		a string
+	}
+	s1 := make([]*S, 0)
+	s1 = append(s1, &S{})
+
+	var s2 []*S
+	if len(s1) > 2{
+		s2 = append(s2, &S{})
+	}
+	t.Log("end...")
+}

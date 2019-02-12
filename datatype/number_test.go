@@ -7,6 +7,7 @@
 package datatype
 
 import (
+	"fmt"
 	"math"
 	"testing"
 )
@@ -28,4 +29,10 @@ func Test_buf_decode(t *testing.T) {
 
 	a = int32(b)
 	t.Log(a)
+}
+
+func Test_long(t *testing.T) {
+	a := int64(-1)
+	b := uint64(a)
+	fmt.Printf("%d\n", b)
 }

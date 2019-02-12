@@ -23,6 +23,32 @@ func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
+func func_encode() {
+	salt := &schema.TLFutureSalt{Data2:&schema.FutureSalt_Data{
+		Salt:rand.Int63(),
+		ValidSince:int32(time.Now().Unix()),
+	}}
+	d1 := salt.Encode()
+	type SaltArray struct{
+		Data []byte `json:"d"`
+	}
+
+	var salts []SaltArray
+	salts = append(salts, SaltArray{d1})
+	b, err := msgpack.Marshal(salts)
+	if err != nil {
+		panic(err)
+	}
+	//fmt.Println("func_encode", len(b))
+
+	var item []*schema.TLFutureSalt
+	err = msgpack.Unmarshal(b, &item)
+	if err != nil {
+		panic(err)
+	}
+	//fmt.Println(item)
+}
+
 func func_msgpack() {
 	salt := &schema.TLFutureSalt{Data2:&schema.FutureSalt_Data{
 		Salt:rand.Int63(),
@@ -54,7 +80,7 @@ func func_json() {
 		panic(err)
 	}
 
-	fmt.Println("func_json", len(b))
+	//fmt.Println("func_json", len(b))
 
 	var item []*schema.TLFutureSalt
 	err = json.Unmarshal(b, &item)
@@ -80,9 +106,28 @@ func func_GobBase64() {
 	_ = item
 	//fmt.Println(item)
 }
+
 func TestName(t *testing.T) {
+	func_msgpack()
+	func_json()
 	func_GobBase64()
+	func_encode()
 }
+
+func Benchmark_json(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		func_json()
+	}
+}
+
+func Benchmark_encode(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		func_encode()
+	}
+}
+
 
 func Benchmark_serialization(b *testing.B) {
 	benchTable := []struct {
@@ -121,4 +166,12 @@ func fromGobBase64(str string) []*schema.TLFutureSalt {
 	err = d.Decode(&m)
 	if err != nil { fmt.Println(`failed gob Decode`, err); }
 	return m
+}
+
+func Test_json_nil(t *testing.T) {
+	p := schema.NewTLContact()
+	err := json.Unmarshal([]byte(""), p)
+	if err != nil {
+		t.Log(err)
+	}
 }
