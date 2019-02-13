@@ -197,3 +197,24 @@ func Test_MapOfStruct(t *testing.T) {
 
 	t.Log(addrsSet)
 }
+
+func Test_add_to_map(t *testing.T) {
+	sessionByType := make(map[int8][]int, 0)
+	data := []struct{
+		t int8
+		val int
+	}{
+		{1, 1},{1,2}, {2,3},{3, 3}, {3, 4},
+	}
+
+	for index, userSession := range data {
+		if v, ok := sessionByType[userSession.t]; ok {
+			v = append(v, index)
+			sessionByType[userSession.t] = v
+		}else{
+			sessionByType[userSession.t] = []int{index}
+		}
+	}
+
+	t.Log(sessionByType)
+}
