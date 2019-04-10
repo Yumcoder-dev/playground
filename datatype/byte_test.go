@@ -105,3 +105,7 @@ func Test_Copy(t *testing.T) {
 	copy(b[10-a:], b1)
 	t.Log(b)
 }
+
+func Test_compare(t *testing.T) {
+	t.Log(bytes.Compare([]byte("a"), []byte("Ab")))
+}

@@ -97,3 +97,21 @@ func Test_append(t *testing.T) {
 	}
 	t.Log("end...")
 }
+
+func Benchmark_ArrInt(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		arrInt := []int{}
+		for j:=0;j<100;j++{
+			arrInt = append(arrInt, j)
+		}
+	}
+}
+
+func Benchmark_ArrInterface(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		arrInt := []interface{}{}
+		for j:=0;j<100;j++{
+			arrInt = append(arrInt, j)
+		}
+	}
+}
