@@ -153,3 +153,33 @@ func Test_Mysql_SingleRow(t *testing.T) {
 
 	t.Log("nil...")
 }
+
+func Test_Mysql_like(t *testing.T) {
+	db, err := sql.Open("mysql", "root:@tcp(172.17.0.2:3306)/yumd")
+	if err != nil {
+		panic(err.Error()) // Just for example purpose. You should use proper error handling instead of panic
+	}
+	defer db.Close()
+
+	var query = `select username from username where username like ?`
+	rows, err := db.Query(query, fmt.Sprintf("%%%s%%", "omidne"))
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	var res []string
+	for rows.Next() {
+		var name string
+		if err = rows.Scan(&name); err != nil {
+			panic(err.Error())
+		}
+		t.Log(name)
+		res = append(res, name)
+	}
+
+	if err = rows.Err(); err != nil {
+		panic(err.Error())
+	}
+
+}

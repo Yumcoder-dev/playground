@@ -12,7 +12,7 @@ import (
 )
 
 func Test_TLConstructorCrc32ToHexadecimal(t *testing.T) {
-	TLConstructor := 426148825
+	TLConstructor := -1640190800
 	fmt.Printf("%x", uint32(TLConstructor))
 }
 
