@@ -7,6 +7,7 @@
 package redis
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"log"
@@ -14,6 +15,7 @@ import (
 	"testing"
 	"time"
 	"yumcoder.com/yumd/server/core/cache2"
+	"yumcoder.com/yumd/server/core/hack2"
 	"yumcoder.com/yumd/server/core/proto/schema"
 	"yumcoder.com/yumd/server/core/test2"
 
@@ -165,4 +167,35 @@ func Test_redis_inc(t *testing.T) {
 
 	//res := []*schema.FutureSalt_Data{}
 	//fmt.Fscan([]byte(val), &res)
+}
+
+////////////////////////////////////////////
+
+func Test_PutGetConvert(t *testing.T) {
+	cache, err := cache2.NewCache(getRedisConfig())
+	defer cache.Close()
+	if err != nil {
+		t.Error(err)
+	}
+
+	//salt := &schema.TLFutureSalt{Data2:&schema.FutureSalt_Data{
+	//	ValidSince:1,
+	//	ValidUntil:2,
+	//	Salt:3,
+	//},
+	//}
+	//val, _:= json.Marshal([]*schema.FutureSalt_Data{salt.Data2})
+	//if err := cache.Put("__test", val, 60*time.Second); err != nil {
+	//	t.Error(err)
+	//}
+
+
+	if v, err := cache.Get("__test"); err != nil {
+		t.Error(err)
+	} else if v != nil{
+		saltList := make([]*schema.FutureSalt_Data, 0)
+		dataBuf,_ := redis.String(v, nil)
+		json.Unmarshal(hack2.Bytes(dataBuf), &saltList)
+		t.Log(saltList)
+	}
 }
