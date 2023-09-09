@@ -3,12 +3,12 @@
 // license that can be found in the LICENSE file.
 //
 // Author: yumcoder (omid.jn@gmail.com)
-//
 package datatype
 
 import (
-	"google.golang.org/grpc/resolver"
 	"testing"
+
+	"google.golang.org/grpc/resolver"
 )
 
 // region map pass by ref
@@ -200,18 +200,18 @@ func Test_MapOfStruct(t *testing.T) {
 
 func Test_add_to_map(t *testing.T) {
 	sessionByType := make(map[int8][]int, 0)
-	data := []struct{
-		t int8
+	data := []struct {
+		t   int8
 		val int
 	}{
-		{1, 1},{1,2}, {2,3},{3, 3}, {3, 4},
+		{1, 1}, {1, 2}, {2, 3}, {3, 3}, {3, 4},
 	}
 
 	for index, userSession := range data {
 		if v, ok := sessionByType[userSession.t]; ok {
 			v = append(v, index)
 			sessionByType[userSession.t] = v
-		}else{
+		} else {
 			sessionByType[userSession.t] = []int{index}
 		}
 	}

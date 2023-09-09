@@ -3,7 +3,6 @@
 // license that can be found in the LICENSE file.
 //
 // Author: yumcoder (omid.jn@gmail.com)
-//
 package datatype
 
 import (
@@ -11,9 +10,12 @@ import (
 	"testing"
 )
 
-type sss struct {
+type StringerStruct struct {
 }
 
+func (s *StringerStruct) String() string {
+	return "StringerStruct struct!"
+}
 func f1(f interface{}) {
 	if name, ok := f.(fmt.Stringer); !ok {
 		fmt.Println(ok)
@@ -25,6 +27,6 @@ func f1(f interface{}) {
 }
 
 func Test_C1(t *testing.T) {
-	s := &sss{}
+	s := &StringerStruct{}
 	f1(s)
 }
